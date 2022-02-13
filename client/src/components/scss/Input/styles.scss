@@ -40,9 +40,16 @@
     transition: box-shadow 0.2s, -ms-transform 0.1s, -webkit-transform 0.1s,
       transform 0.1s;
     width: auto;
+
     &:hover {
       box-shadow: $input-submit-hovered-shadow;
       background-color: invert($input-submit-bg, 90%);
+    }
+
+    // Media querys
+    @media screen and (max-width: $screen-md) {
+      width: 30vw;
+      margin-top: 20px;
     }
   }
 

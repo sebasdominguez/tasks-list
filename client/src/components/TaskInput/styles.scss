@@ -1,11 +1,18 @@
+@import "../../styles/variables";
+
 .task {
   &__container {
     display: flex;
     justify-content: center;
     align-items: center;
     margin-bottom: 20px;
-    border-bottom: 1px dashed;
     padding: 10px;
+
+    // Media querys
+    @media screen and (max-width: $screen-md) {
+      flex-direction: column;
+      align-items: center;
+    }
   }
 
   &__item {

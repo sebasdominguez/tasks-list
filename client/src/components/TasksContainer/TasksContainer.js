@@ -5,7 +5,8 @@ import {
   updateTask,
   deleteTask,
 } from "../../services/taskServices";
-import { ListItem, Message, TaskInput } from "..";
+import { Modal } from "../scss";
+import { TaskCard, Message, TaskInput } from "..";
 import "./styles.scss";
 
 export const Tasks = () => {
@@ -16,6 +17,7 @@ export const Tasks = () => {
     status: "",
   });
   const [currentTask, setCurrentTask] = useState("");
+  const [contentModal, setContentModal] = useState({});
 
   useEffect(() => {
     (async function getData() {
@@ -23,7 +25,7 @@ export const Tasks = () => {
         const { data } = await getTasks();
         setTasks(data);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     })();
   }, []);
@@ -36,13 +38,11 @@ export const Tasks = () => {
     e.preventDefault();
     try {
       const { data } = await addTask({ task: currentTask });
-      console.log("data", data);
       if (data.status === 400) {
         handleMessage(data.message, "error");
       } else {
         setTasks((prevTasks) => [...prevTasks, data]);
         handleMessage("Task created!", "success");
-        setCurrentTask("");
       }
     } catch (error) {
       console.error(error);
@@ -59,15 +59,17 @@ export const Tasks = () => {
         completed: newTasks[index].completed,
       });
       setTasks(newTasks);
+      setContentModal({});
     } catch (error) {
       setTasks(tasks);
-      console.log(error);
+      console.error(error);
     }
   };
 
   const handleDelete = async (currentTask) => {
     try {
       const { data } = await deleteTask(currentTask);
+      setContentModal({});
       setTasks(data);
     } catch (error) {
       console.error(error);
@@ -75,6 +77,7 @@ export const Tasks = () => {
   };
 
   const handleMessage = (text, status) => {
+    setCurrentTask("");
     setMessage({
       text,
       visible: true,
@@ -99,14 +102,23 @@ export const Tasks = () => {
       />
       {message?.text && <Message message={message} />}
       <div className="tasklist">
-        {tasks.map((task) => (
-          <ListItem
-            task={task}
-            handleUpdate={handleUpdate}
-            handleDelete={handleDelete}
+        {tasks.map((task, index) => (
+          <TaskCard
+            key={task._id}
+            index={index}
+            content={task}
+            setShowModal={() => setContentModal({ ...task, number: index + 1 })}
           />
         ))}
       </div>
+      {contentModal?._id && (
+        <Modal
+          content={contentModal}
+          onClose={() => setContentModal({})}
+          handleUpdate={handleUpdate}
+          handleDelete={handleDelete}
+        />
+      )}
     </Fragment>
   );
 };

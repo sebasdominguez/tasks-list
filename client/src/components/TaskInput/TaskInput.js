@@ -11,7 +11,7 @@ export const TaskInput = ({
   return (
     <form
       onSubmit={handleSubmit}
-      className="input__container"
+      className="task__container"
       style={{ margin: "15px 0" }}
     >
       <Input

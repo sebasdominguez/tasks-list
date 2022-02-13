@@ -1,3 +1,5 @@
+@import "../../styles/variables";
+
 /* Form styles */
 .input__container {
   display: flex;
@@ -9,4 +11,12 @@
 .tasklist {
   width: 60vw;
   margin: 40px auto;
+  display: flex;
+  flex-wrap: wrap;
+
+  // Media querys
+  @media screen and (max-width: $screen-md) {
+    flex-direction: column;
+    align-items: center;
+  }
 }

@@ -1,0 +1,37 @@
+@import "variables";
+@import "fonts";
+
+//Mixin to set dynamically typography size and weight
+@mixin typography-input($font-size, $font-weight) {
+  font-size: $font-size;
+  font-weight: $font-weight;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-decoration: none;
+  border: none;
+  outline: none;
+  font-family: $font-family;
+  background: $gray;
+}
+
+input,
+div,
+p {
+  // Media querys
+  @media screen and (min-width: $screen-xl) {
+    @include typography-input($font-size-xl, 600);
+  }
+
+  @media screen and (min-width: $screen-md) and (max-width: $screen-xl) {
+    @include typography-input($font-size-md, 600);
+  }
+
+  @media screen and (max-width: $screen-md) {
+    @include typography-input($font-size-sm, 300);
+  }
+}

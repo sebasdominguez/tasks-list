@@ -1,37 +1,16 @@
+/* App container style */
 .App {
   width: 100vw;
   height: 100vh;
   background: #f5f5f5;
 }
 
+/* App title style */
 .heading {
   font-size: 20px;
   font-weight: bold;
   text-align: center;
-}
-
-.flex {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.container {
-  width: 500px;
-  min-height: 300px;
-  padding: 10px;
-}
-
-.task_container {
-  margin: 10px 0;
-  cursor: pointer;
-}
-
-.task {
-  flex-grow: 1;
-  margin-left: 10px;
-}
-
-.line_through {
-  text-decoration: line-through;
+  padding-top: 40px;
+  margin: 0;
+  letter-spacing: 8px;
 }

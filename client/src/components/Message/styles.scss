@@ -1,0 +1,28 @@
+.message {
+  &__container {
+    width: 50vw;
+    text-align: center;
+    margin: auto auto;
+    font-weight: 600;
+    text-transform: uppercase;
+    border: 1px dashed rgb(48, 48, 48);
+  }
+
+  &__text {
+    height: 100%;
+    margin: 0;
+    padding: 15px;
+  }
+
+  &__text--error {
+    color: rgb(230, 91, 48);
+    border: 2px dashed rgb(250, 9, 9);
+    background-color: rgb(238, 161, 214);
+  }
+
+  &__text--success {
+    color: rgb(80, 99, 23);
+    border: 1px dashed rgb(14, 77, 24);
+    background-color: rgb(255, 255, 255);
+  }
+}

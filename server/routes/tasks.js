@@ -2,53 +2,44 @@ const Task = require("../models/task");
 const express = require("express");
 const router = express.Router();
 
-function success(res, payload) {
-  return res.status(200).json(payload);
-}
-
 router.get("/", async (req, res) => {
   try {
     const tasks = await Task.find({});
-    return success(res, tasks);
+    res.status(200).json(tasks);
   } catch (error) {
-    next({ status: 400, message: "failed to get tasks" });
+    res.send(error);
   }
 });
 
 router.post("/", async (req, res) => {
   try {
-    const task = await Task.create(req.body);
-    return success(res, task);
+    const task = await new Task(req.body).save();
+    res.status(200).json(task);
   } catch (error) {
-    next({ status: 400, message: "failed to create task" });
-  }
-});
-
-router.put("/:id", async (req, res) => {
-  try {
-    const task = await Task.findOneAndUpdate(req.params.id, req.body, {
-      new: true,
+    res.send({
+      status: 400,
+      message: "Failed to create todo. Check if the task is already listed.",
     });
-    return success(res, task);
-  } catch (error) {
-    next({ status: 400, message: "failed to update taks" });
   }
 });
 
 router.delete("/:id", async (req, res) => {
   try {
     await Task.findByIdAndRemove(req.params.id);
-    return success(res, "task deleted");
+    const tasks = await Task.find();
+    res.status(200).json(tasks);
   } catch (error) {
-    next({ status: 400, message: "failed to delete task" });
+    res.send(error);
   }
 });
 
-router.use((err, req, res, next) => {
-  return res.status(err.status || 400).json({
-    status: err.status || 400,
-    message: err.message || "there was an error processing request",
-  });
+router.put("/:id", async (req, res) => {
+  try {
+    const task = await Task.findOneAndUpdate({ _id: req.params.id }, req.body);
+    res.status(200).json(task);
+  } catch (error) {
+    res.send(error);
+  }
 });
 
 module.exports = router;

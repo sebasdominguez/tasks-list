@@ -1,0 +1,7 @@
+/build/**
+/coverage/**
+/docs/**
+/tmp/**
+/src/libs/**
+docker**
+Docker**

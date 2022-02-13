@@ -1,4 +1,4 @@
-@import "../../../styles/variables";
+@import '../../../styles/variables';
 
 @function invert($color, $amount: 100%) {
   $inverse: change-color($color, $hue: hue($color) + 180);
@@ -37,8 +37,7 @@
     margin-left: 10px;
     display: inline-block;
     touch-action: manipulation;
-    transition: box-shadow 0.2s, -ms-transform 0.1s, -webkit-transform 0.1s,
-      transform 0.1s;
+    transition: box-shadow 0.2s, -ms-transform 0.1s, -webkit-transform 0.1s, transform 0.1s;
     width: auto;
 
     &:hover {

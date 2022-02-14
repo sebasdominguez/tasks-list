@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 module.exports = async () => {
   try {
-    const db = await mongoose.connect("mongodb://mongo/mydatabase");
+    const db = await mongoose.connect("mongodb://mongo:27017/mydatabase");
     mongoose.set("debug", true);
     mongoose.Promise = Promise;
     console.log(`DB connected to ${db.connection.host}`);

@@ -2,8 +2,9 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+test('H1 is found', () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+  const titleText = 'YOUR TASK LIST';
+  const title = screen.getByRole('heading', { level: 1 });
+  title.value = titleText;
 });

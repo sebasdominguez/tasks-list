@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect, Fragment, ChangeEvent, SetStateAction, Dispatch } from 'react';
 import { addTask, getTasks, updateTask, deleteTask } from '../../services/taskServices';
 import { Modal } from '../scss';
 import { TaskCard, Message, TaskInput } from '..';
@@ -17,6 +16,23 @@ interface Message {
   status: string;
   visible: boolean;
 }
+
+const createMessage = (setState: Dispatch<SetStateAction<Message>>, text: string, visible: boolean, status: string) => {
+  setState({
+    text,
+    visible,
+    status,
+  });
+};
+
+const resetContentModal = (setState: Dispatch<SetStateAction<Task>>) => {
+  setState({
+    number: undefined,
+    _id: '',
+    task: '',
+    completed: false,
+  });
+};
 
 export const Tasks = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -36,20 +52,22 @@ export const Tasks = () => {
   useEffect(() => {
     (async function getData() {
       try {
+        createMessage(setMessage, 'Loading tasks...', true, 'info');
         const { data } = await getTasks();
         setTasks(data);
+        createMessage(setMessage, '', false, '');
       } catch (error) {
+        handleMessage('Failed to get tasks. Try again', 'error');
         console.error(error);
       }
     })();
   }, []);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleChange = ({ currentTarget: input }: any) => {
-    setCurrentTask(input.value);
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setCurrentTask(event.currentTarget.value);
   };
 
-  const handleSubmit = async (event: any) => {
+  const handleSubmit = async (event: ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
       const { data } = await addTask({ task: currentTask });
@@ -61,6 +79,7 @@ export const Tasks = () => {
       }
     } catch (error) {
       console.error(error);
+      handleMessage('Task not created, try again.', 'error');
     }
   };
 
@@ -74,52 +93,42 @@ export const Tasks = () => {
         completed: newTasks[index].completed,
       });
       setTasks(newTasks);
-      setContentModal({
-        number: undefined,
-        _id: '',
-        task: '',
-        completed: false,
-      });
+      resetContentModal(setContentModal);
     } catch (error) {
       setTasks(tasks);
       console.error(error);
+      handleMessage('Task not updated, try again.', 'error');
     }
   };
 
   const handleDelete = async (currentTask: string) => {
     try {
       const { data } = await deleteTask(currentTask);
-      setContentModal({
-        number: undefined,
-        _id: '',
-        task: '',
-        completed: false,
-      });
+      resetContentModal(setContentModal);
       setTasks(data);
     } catch (error) {
       console.error(error);
+      handleMessage('Task not deleted, try again.', 'error');
     }
   };
 
   const handleMessage = (text: string, status: string) => {
     setCurrentTask('');
-    setMessage({
-      text,
-      visible: true,
-      status,
-    });
+    createMessage(setMessage, text, true, status);
     setTimeout(() => {
-      setMessage({
-        text: '',
-        visible: false,
-        status: '',
-      });
+      createMessage(setMessage, '', false, '');
     }, 2000);
   };
 
   return (
     <Fragment>
-      <TaskInput handleSubmit={handleSubmit} currentTask={currentTask} handleChange={handleChange} message={message} />
+      <TaskInput
+        handleSubmit={handleSubmit}
+        currentTask={currentTask}
+        handleChange={handleChange}
+        message={message}
+        tooltipText={!!message.text}
+      />
       {message?.text && <Message message={message} />}
       <div className="tasklist">
         {tasks.map((task, index: number) => (

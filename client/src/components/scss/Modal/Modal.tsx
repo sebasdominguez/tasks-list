@@ -19,7 +19,7 @@ interface ModalProps {
 export const Modal = ({ content, onClose, handleUpdate, handleDelete }: ModalProps) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const closeOnEscapeKeyDown = (_e: any) => {
-    if ((_e.charCode || _e.keyCode) === 27) {
+    if (_e.key === 'Escape') {
       onClose();
     }
   };
@@ -39,19 +39,16 @@ export const Modal = ({ content, onClose, handleUpdate, handleDelete }: ModalPro
           <div className="modal__header">
             <h5>Task #{content.number}</h5>
           </div>
-          <Button onClose={() => onClose(content._id)} className="modal__close" />
-          <button className="modal__close" onClick={() => onClose()}>
-            <span style={{ marginBottom: '-3px' }}>X</span>
-          </button>
+          <Button onClick={() => onClose(content._id)} className="modal__close" text="X" />
           <div className="modal__content">{content.task} </div>
           <div className="modal__actions">
             <div className="modal__actions-container">
-              <button className="modal__delete-btn" onClick={() => handleDelete(content._id)}>
-                Remove
-              </button>
-              <button className="modal__update-btn" onClick={() => handleUpdate(content._id)}>
-                {!content.completed ? 'Completed!' : 'Reset'}
-              </button>
+              <Button onClick={() => handleDelete(content._id)} className="modal__delete" text="Remove" />
+              <Button
+                onClick={() => handleUpdate(content._id)}
+                className="modal__update"
+                text={!content.completed ? 'Completed!' : 'Reset'}
+              />
             </div>
           </div>
         </div>

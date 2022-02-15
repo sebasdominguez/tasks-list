@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { ChangeEventHandler } from 'react';
 import './styles.scss';
 
 export interface InputProps {
   value: string;
-  handleChange?: ({ currentTarget: input }: { currentTarget: unknown }) => void;
+  handleChange?: ChangeEventHandler<HTMLInputElement>;
   type: string;
   placeholder?: string;
   disabled?: boolean;

@@ -1,12 +1,13 @@
 @import 'variables';
 @import 'fonts';
 
-//Mixin to set dynamically typography size and weight
+// Mixin to set dynamically typography size and weight
 @mixin typography-input($font-size, $font-weight) {
   font-size: $font-size;
   font-weight: $font-weight;
 }
 
+// Reset css
 html,
 body {
   margin: 0;
@@ -19,10 +20,10 @@ body {
   background: $gray;
 }
 
+// Typography media querys
 input,
 div,
 p {
-  // Media querys
   @media screen and (min-width: $screen-xl) {
     @include typography-input($font-size-xl, 600);
   }

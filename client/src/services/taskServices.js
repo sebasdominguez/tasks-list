@@ -1,5 +1,5 @@
 import axios from 'axios';
-const apiUrl = `http://localhost:8080`;
+const apiUrl = 'http://localhost:8080';
 
 export function addTask(task) {
   return axios.post(apiUrl, task);

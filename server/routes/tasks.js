@@ -1,11 +1,30 @@
+const fetch = require("node-fetch");
+const generateUUID = require("../utils/uuid");
 const Task = require("../models/task");
 const express = require("express");
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+router.get("/:param", async (req, res) => {
   try {
-    const tasks = await Task.find({});
-    res.status(200).json(tasks);
+    const param = req.params.param;
+    let tasks = [];
+    if (param === "custom") {
+      tasks = await Task.find({});
+      return res.status(200).json(tasks);
+    } else {
+      // check if the param is a number
+      const quantity = /^\d+$/.test(param) ? param : "3";
+      fetch(`https://lorem-faker.vercel.app/api?quantity=${quantity}`)
+        .then((res) => res.json())
+        .then((json) => {
+          tasks = json.map((task) => ({
+            _id: generateUUID(),
+            task,
+            completed: false,
+          }));
+          res.status(200).json(tasks);
+        });
+    }
   } catch (error) {
     res.send(error);
   }

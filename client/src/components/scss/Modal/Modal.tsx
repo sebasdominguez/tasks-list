@@ -1,5 +1,7 @@
 import React, { useEffect, Fragment } from 'react';
+/** components */
 import { Button } from '../index';
+/** styles */
 import './styles.scss';
 
 interface Content {
@@ -14,9 +16,10 @@ interface ModalProps {
   handleUpdate: (id: string) => void;
   handleDelete: (id: string) => void;
   content: Content;
+  param: string;
 }
 
-export const Modal = ({ content, onClose, handleUpdate, handleDelete }: ModalProps) => {
+export const Modal = ({ content, onClose, handleUpdate, handleDelete, param }: ModalProps) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const closeOnEscapeKeyDown = (_e: any) => {
     if (_e.key === 'Escape') {
@@ -31,6 +34,8 @@ export const Modal = ({ content, onClose, handleUpdate, handleDelete }: ModalPro
     };
   });
 
+  console.log('render modal');
+
   return (
     <Fragment>
       <div className="modal__bg" onClick={() => onClose()} />
@@ -43,7 +48,11 @@ export const Modal = ({ content, onClose, handleUpdate, handleDelete }: ModalPro
           <div className="modal__content">{content.task} </div>
           <div className="modal__actions">
             <div className="modal__actions-container">
-              <Button onClick={() => handleDelete(content._id)} className="modal__delete" text="Remove" />
+              {param === 'custom' ? (
+                <Button onClick={() => handleDelete(content._id)} className="modal__delete" text="Remove" />
+              ) : (
+                <Button onClick={() => onClose(content._id)} className="modal__delete" text="Close" />
+              )}
               <Button
                 onClick={() => handleUpdate(content._id)}
                 className="modal__update"

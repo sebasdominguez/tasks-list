@@ -1,4 +1,5 @@
 import React, { ReactNode } from 'react';
+/** styles */
 import './styles.scss';
 
 interface TooltipWrapperProps {

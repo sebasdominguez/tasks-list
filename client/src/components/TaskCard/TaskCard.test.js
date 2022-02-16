@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 import { TaskCard } from './TaskCard';
 
 describe('TaskCard works as expected', () => {
-  const content = {
+  const task = {
     number: 1,
     _id: 'SDSD223sdsa',
     completed: false,
@@ -12,7 +12,7 @@ describe('TaskCard works as expected', () => {
   };
 
   test('TaskCard is displayed', () => {
-    render(<TaskCard content={content} index={3} />);
+    render(<TaskCard task={task} index={3} />);
     expect(screen.getByText('Task #', { exact: false })).toBeInTheDocument();
     expect(screen.getByText('this is a test')).toBeInTheDocument();
   });

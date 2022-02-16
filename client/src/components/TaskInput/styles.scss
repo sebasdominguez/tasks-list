@@ -3,15 +3,27 @@
 .task {
   &__container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-bottom: 20px;
     padding: 10px;
 
     // Media querys
     @media screen and (max-width: $screen-md) {
       flex-direction: column;
       align-items: center;
+    }
+
+    & .input__container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin-bottom: 20px;
+
+      @media screen and (max-width: $screen-md) {
+        flex-direction: column;
+        align-items: center;
+      }
     }
   }
 

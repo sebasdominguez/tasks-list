@@ -1,0 +1,14 @@
+@import '../../styles/variables';
+
+.tasklist {
+  width: 60vw;
+  margin: 0 auto 100px auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  // Media querys
+  @media screen and (max-width: $screen-md) {
+    flex-direction: column;
+    align-items: center;
+  }
+}

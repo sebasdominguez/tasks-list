@@ -13,6 +13,6 @@ export function deleteTask(id) {
   return axios.delete(`${apiUrl}/${id}`);
 }
 
-export function getTasks() {
-  return axios.get(apiUrl);
+export function getTasks(param) {
+  return axios.get(`${apiUrl}/${param}`);
 }

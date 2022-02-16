@@ -1,14 +1,11 @@
 import React from 'react';
+/** components */
+import { ContentI } from '../interfaces';
+/** styles */
 import './styles.scss';
 
-interface ContentMessageProps {
-  text: string;
-  visible: boolean;
-  status: string;
-}
-
 interface MessageProps {
-  message: ContentMessageProps;
+  message: ContentI;
 }
 
 export const Message = ({ message }: MessageProps) => {

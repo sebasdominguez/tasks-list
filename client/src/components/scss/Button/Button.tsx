@@ -1,4 +1,5 @@
 import React from 'react';
+/** styles */
 import './styles.scss';
 
 interface ButtonProps {

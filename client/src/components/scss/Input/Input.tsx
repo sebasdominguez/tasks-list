@@ -1,4 +1,5 @@
 import React, { ChangeEventHandler } from 'react';
+/** styles */
 import './styles.scss';
 
 export interface InputProps {

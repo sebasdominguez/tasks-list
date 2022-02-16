@@ -1,27 +1,16 @@
 @import '../../styles/variables';
 
-/* Form styles */
-.input__container {
+.container {
+  min-height: 100vh;
   display: flex;
-  justify-content: center;
-  align-items: center;
-}
+  flex-direction: column;
+  box-sizing: border-box;
 
-/* Loading meessage style*/
-.loading {
-  text-align: center;
-}
+  & header {
+    padding: 60px 0px 100px 0px;
 
-/* Task list styles */
-.tasklist {
-  width: 60vw;
-  margin: 40px auto;
-  display: flex;
-  flex-wrap: wrap;
-
-  // Media querys
-  @media screen and (max-width: $screen-md) {
-    flex-direction: column;
-    align-items: center;
+    @media screen and (max-width: $screen-md) {
+      padding: 20px 0px 40px 0px;
+    }
   }
 }

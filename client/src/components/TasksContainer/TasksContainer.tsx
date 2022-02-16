@@ -1,23 +1,22 @@
-import React, { useState, useEffect, Fragment, ChangeEvent, SetStateAction, Dispatch } from 'react';
+import React, { useState, useEffect, ChangeEvent, SetStateAction, Dispatch } from 'react';
+import { useParams } from 'react-router-dom';
+
 import { addTask, getTasks, updateTask, deleteTask } from '../../services/taskServices';
-import { Modal } from '../scss';
-import { TaskCard, Message, TaskInput } from '..';
+import { CustomTasksComponent as CustomTasks } from './CustomTasksComponent';
+import { DynamicTasksComponent as DynamicTasks } from './DynamicTasksComponent';
+
+import { TaskI, MessageI } from '../interfaces';
+
+import { Modal, Footer } from '../scss';
 import './styles.scss';
 
-interface Task {
-  _id: string;
-  number: number | undefined;
-  task: string;
-  completed: boolean;
-}
-
-interface Message {
-  text: string;
-  status: string;
-  visible: boolean;
-}
-
-const createMessage = (setState: Dispatch<SetStateAction<Message>>, text: string, visible: boolean, status: string) => {
+/* Auxils functions here to avoid redeclare them when re-render */
+const createMessage = (
+  setState: Dispatch<SetStateAction<MessageI>>,
+  text: string,
+  visible: boolean,
+  status: string,
+) => {
   setState({
     text,
     visible,
@@ -25,7 +24,7 @@ const createMessage = (setState: Dispatch<SetStateAction<Message>>, text: string
   });
 };
 
-const resetContentModal = (setState: Dispatch<SetStateAction<Task>>) => {
+const resetContentModal = (setState: Dispatch<SetStateAction<TaskI>>) => {
   setState({
     number: undefined,
     _id: '',
@@ -34,34 +33,54 @@ const resetContentModal = (setState: Dispatch<SetStateAction<Task>>) => {
   });
 };
 
+const checkParamAndSetState = async (params: { param?: string }, setState: Dispatch<SetStateAction<TaskI[]>>) => {
+  if (params.param === 'custom') {
+    const { data } = await getTasks('custom');
+    setState(data);
+  } else {
+    const quantity = params.param ? params.param : '3';
+    const { data } = await getTasks(quantity);
+    setState(data);
+  }
+};
+
+const getData = async (
+  setMessage: Dispatch<SetStateAction<MessageI>>,
+  params: { param?: string | undefined },
+  setTasks: Dispatch<SetStateAction<TaskI[]>>,
+  handleMessage: (text: string, status: string) => void,
+) => {
+  try {
+    createMessage(setMessage, 'Loading tasks...', true, 'info');
+    checkParamAndSetState(params, setTasks);
+    createMessage(setMessage, '', false, '');
+  } catch (error) {
+    handleMessage('Failed to get tasks. Try again', 'error');
+    console.error(error);
+  }
+};
+
+/* Main Container Component */
 export const Tasks = () => {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [message, setMessage] = useState<Message>({
+  const [tasks, setTasks] = useState<TaskI[]>([]);
+  const [message, setMessage] = useState<MessageI>({
     text: '',
     visible: false,
     status: '',
   });
   const [currentTask, setCurrentTask] = useState('');
-  const [contentModal, setContentModal] = useState<Task>({
+  const [contentModal, setContentModal] = useState<TaskI>({
     number: undefined,
     _id: '',
     task: '',
     completed: false,
   });
 
+  const params = useParams();
+
   useEffect(() => {
-    (async function getData() {
-      try {
-        createMessage(setMessage, 'Loading tasks...', true, 'info');
-        const { data } = await getTasks();
-        setTasks(data);
-        createMessage(setMessage, '', false, '');
-      } catch (error) {
-        handleMessage('Failed to get tasks. Try again', 'error');
-        console.error(error);
-      }
-    })();
-  }, []);
+    getData(setMessage, params, setTasks, handleMessage);
+  }, [params]);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setCurrentTask(event.currentTarget.value);
@@ -74,7 +93,14 @@ export const Tasks = () => {
       if (data.status === 400) {
         handleMessage(data.message, 'error');
       } else {
-        setTasks((prevTasks) => [...prevTasks, data]);
+        // Add the new tasks to the exising ones, or put ir alone
+        let newTasks = [];
+        if (tasks.length > 0) {
+          newTasks = [...tasks, data];
+        } else {
+          newTasks = [data];
+        }
+        setTasks(newTasks);
         handleMessage('Task created!', 'success');
       }
     } catch (error) {
@@ -120,26 +146,23 @@ export const Tasks = () => {
     }, 2000);
   };
 
+  console.log('render task container');
   return (
-    <Fragment>
-      <TaskInput
-        handleSubmit={handleSubmit}
-        currentTask={currentTask}
-        handleChange={handleChange}
-        message={message}
-        tooltipText={!!message.text}
-      />
-      {message?.text && <Message message={message} />}
-      <div className="tasklist">
-        {tasks.map((task, index: number) => (
-          <TaskCard
-            key={task._id}
-            index={index}
-            content={task}
-            setShowModal={() => setContentModal({ ...task, number: index + 1 })}
-          />
-        ))}
-      </div>
+    <div className="container">
+      {params.param === 'custom' ? (
+        <CustomTasks
+          handleSubmit={handleSubmit}
+          currentTask={currentTask}
+          handleChange={handleChange}
+          message={message}
+          tasks={tasks}
+          tooltipText={!!message.text}
+          setContentModal={setContentModal}
+        />
+      ) : (
+        <DynamicTasks tasks={tasks} setContentModal={setContentModal} />
+      )}
+
       {contentModal?._id && (
         <Modal
           content={contentModal}
@@ -153,8 +176,10 @@ export const Tasks = () => {
           }
           handleUpdate={handleUpdate}
           handleDelete={handleDelete}
+          param={params.param || ''}
         />
       )}
-    </Fragment>
+      <Footer path={params?.param === 'custom' ? 'custom' : '/'} />
+    </div>
   );
 };

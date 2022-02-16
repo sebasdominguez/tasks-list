@@ -17,10 +17,66 @@ body {
   border: none;
   outline: none;
   font-family: $font-family;
-  background: $gray;
 }
 
-// Typography media querys
+// Footer
+.footer {
+  position: fixed;
+  width: 100%;
+  background: beige;
+  bottom: 0;
+  height: 60px;
+}
+
+// Typography
+.heading {
+  text-align: center;
+  margin: 0;
+  width: 100%;
+}
+
+.heading--1 {
+  color: $h1-color;
+  font-weight: 900;
+  line-height: 72px;
+  margin: 0 0 24px;
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 8px;
+  width: 100%;
+  @media screen and (max-width: $screen-md) {
+    line-height: 40px;
+  }
+}
+
+.heading--2 {
+  font-weight: 600;
+  line-height: 30px;
+  letter-spacing: 4px;
+  width: 100%;
+}
+
+.heading--3,
+.footer__text {
+  font-weight: 300;
+  line-height: 30px;
+  color: $h3-color;
+  padding-bottom: 10px;
+  text-align: center;
+}
+
+.link {
+  text-decoration: none;
+  font-weight: 900;
+  cursor: pointer;
+  color: $link-color;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
 input,
 div,
 p {

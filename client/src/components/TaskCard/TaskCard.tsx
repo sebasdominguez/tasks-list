@@ -1,27 +1,25 @@
 import React from 'react';
+/** interfaces */
+import { TaskI } from '../interfaces';
+/** styles */
 import './styles.scss';
-
-interface Content {
-  number?: number;
-  _id: string;
-  task?: string;
-  completed: boolean;
-}
 
 interface TaskCardProps {
   index: number;
   setShowModal: (status: boolean) => void;
-  content: Content;
+  task: TaskI;
 }
 
-export const TaskCard = ({ content, index, setShowModal }: TaskCardProps) => {
+export const TaskCard = ({ task, index, setShowModal }: TaskCardProps) => {
+  console.log('render taskcar');
   return (
     <div
-      className={content.completed ? 'card__container card__container--completed' : 'card__container'}
+      datatest-id="task"
+      className={task.completed ? 'card__container card__container--completed' : 'card__container'}
       onClick={() => setShowModal(true)}
     >
       <h3>Task #{index + 1}</h3>
-      <p className="card__text">{content.task}</p>
+      <p className="card__text">{task.task}</p>
     </div>
   );
 };

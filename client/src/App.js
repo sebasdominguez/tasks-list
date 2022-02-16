@@ -1,4 +1,5 @@
 import React from 'react';
+import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import { Tasks } from './components';
 import './App.css';
 import './styles/global.scss';
@@ -6,8 +7,13 @@ import './styles/global.scss';
 function App() {
   return (
     <div className="App">
-      <h1 className="heading">YOUR TASK LIST</h1>
-      <Tasks />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/:param" element={<Tasks />} />
+          <Route path="/" element={<Tasks />} />
+          {/** Other routes... */}
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }

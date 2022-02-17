@@ -5,7 +5,7 @@ interface FooterProps {
   path: string;
 }
 
-export const Footer = ({ path }: FooterProps) => {
+export const Footer = React.memo(({ path }: FooterProps) => {
   return (
     <footer className="footer">
       {path !== "custom" ? (
@@ -33,4 +33,4 @@ export const Footer = ({ path }: FooterProps) => {
       )}
     </footer>
   );
-};
+});

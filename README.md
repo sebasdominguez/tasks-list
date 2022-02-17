@@ -35,6 +35,11 @@ This app has 2 main functions:
 
 ## Start Point
 
-- Clone the repo
-- Open a terminal on the root and run 'docker-compose up --build'
-- Enjoy it...
+1. Clone the repo
+2. Open a terminal on the root and run 'docker-compose up --build'
+3. Enjoy it...
+
+## Unit testing
+
+1. Open a terminal in /client
+2. Run `npm run test`

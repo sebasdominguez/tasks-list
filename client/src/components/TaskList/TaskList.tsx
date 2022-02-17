@@ -11,20 +11,22 @@ interface TaskListProps {
   setContentModal: (content: TaskI) => void;
 }
 
-export const TaskList = ({ setContentModal, tasks }: TaskListProps) => {
-  console.log("tasks", tasks);
-
-  return (
-    <main data-testid="task-list" className="tasklist">
-      {tasks?.length > 0 &&
-        tasks.map((task, index: number) => (
-          <TaskCard
-            key={task._id}
-            index={index}
-            task={task}
-            setShowModal={() => setContentModal({ ...task, number: index + 1 })}
-          />
-        ))}
-    </main>
-  );
-};
+export const TaskList = React.memo(
+  ({ setContentModal, tasks }: TaskListProps) => {
+    return (
+      <main data-testid="task-list" className="tasklist">
+        {tasks?.length > 0 &&
+          tasks.map((task, index: number) => (
+            <TaskCard
+              key={task._id}
+              index={index}
+              task={task}
+              setShowModal={() =>
+                setContentModal({ ...task, number: index + 1 })
+              }
+            />
+          ))}
+      </main>
+    );
+  }
+);

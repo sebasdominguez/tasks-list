@@ -1,5 +1,5 @@
 const fetch = require("node-fetch");
-const generateUUID = require("../utils/uuid");
+// const generateUUID = require("../utils/uuid");
 const Task = require("../models/task");
 const express = require("express");
 const router = express.Router();
@@ -7,6 +7,7 @@ const router = express.Router();
 const createTasks = (response) =>
   response.map((task) =>
     new Task({
+      // Let mongoose create the id dynamically
       // _id: generateUUID(),
       task,
       completed: false,
@@ -15,8 +16,6 @@ const createTasks = (response) =>
 
 router.get("/:param", async (req, res) => {
   try {
-    console.log("req.query", req.query);
-
     const param = req.query.param;
     const originalTasks = await Task.find({});
     if (
@@ -38,7 +37,6 @@ router.get("/:param", async (req, res) => {
           res.status(200).json([...originalTasks, ...responses])
         );
       };
-      console.log("checkedQuantity", checkedQuantity);
       if (checkedQuantity > 0) {
         fetchedTaks(checkedQuantity);
       } else {
@@ -54,14 +52,13 @@ router.get("/:param", async (req, res) => {
 });
 
 router.post("/api", async (req, res) => {
-  console.log("POST req.body", req.body);
   try {
     const task = await new Task(req.body).save();
     res.status(200).json(task);
   } catch (error) {
     res.send({
       status: 400,
-      message: "Failed to create todo. Check if the task is already listed.",
+      message: "Failed to create task. Check if the task is already listed.",
     });
   }
 });

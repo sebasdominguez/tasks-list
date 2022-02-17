@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 /** interfaces */
-import { TaskI } from '../interfaces';
+import { TaskI } from "../interfaces";
 /** styles */
-import './styles.scss';
+import "./styles.scss";
 
 interface TaskCardProps {
   index: number;
@@ -11,11 +11,14 @@ interface TaskCardProps {
 }
 
 export const TaskCard = ({ task, index, setShowModal }: TaskCardProps) => {
-  console.log('render taskcar');
   return (
     <div
       datatest-id="task"
-      className={task.completed ? 'card__container card__container--completed' : 'card__container'}
+      className={
+        task.completed
+          ? "card__container card__container--completed"
+          : "card__container"
+      }
       onClick={() => setShowModal(true)}
     >
       <h3>Task #{index + 1}</h3>

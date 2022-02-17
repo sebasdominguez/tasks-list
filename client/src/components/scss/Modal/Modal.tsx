@@ -38,8 +38,6 @@ export const Modal = ({
     };
   });
 
-  console.log("render modal");
-
   return (
     <Fragment>
       <div className="modal__bg" onClick={() => onClose()} />

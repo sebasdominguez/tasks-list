@@ -1,10 +1,10 @@
-import React from 'react';
+import React from "react";
 /** components */
-import { TaskCard } from '..';
+import { TaskCard } from "..";
 /** interfaces */
-import { TaskI } from '../interfaces';
+import { TaskI } from "../interfaces";
 /** styles */
-import './styles.scss';
+import "./styles.scss";
 
 interface TaskListProps {
   tasks: TaskI[];
@@ -12,6 +12,8 @@ interface TaskListProps {
 }
 
 export const TaskList = ({ setContentModal, tasks }: TaskListProps) => {
+  console.log("tasks", tasks);
+
   return (
     <main data-testid="task-list" className="tasklist">
       {tasks?.length > 0 &&

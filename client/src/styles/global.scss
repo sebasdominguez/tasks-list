@@ -1,5 +1,5 @@
-@import 'variables';
-@import 'fonts';
+@import "variables";
+@import "fonts";
 
 // Mixin to set dynamically typography size and weight
 @mixin typography-input($font-size, $font-weight) {
@@ -25,7 +25,10 @@ body {
   width: 100%;
   background: beige;
   bottom: 0;
-  height: 60px;
+  height: 10vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 // Typography
@@ -55,6 +58,8 @@ body {
   line-height: 30px;
   letter-spacing: 4px;
   width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .heading--3,

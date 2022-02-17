@@ -1,21 +1,33 @@
-import React, { useState, useEffect, ChangeEvent, SetStateAction, Dispatch } from 'react';
-import { useParams } from 'react-router-dom';
+import React, {
+  useState,
+  useEffect,
+  ChangeEvent,
+  SetStateAction,
+  Dispatch,
+} from "react";
 
-import { addTask, getTasks, updateTask, deleteTask } from '../../services/taskServices';
-import { CustomTasksComponent as CustomTasks } from './CustomTasksComponent';
-import { DynamicTasksComponent as DynamicTasks } from './DynamicTasksComponent';
+import { useParams } from "react-router-dom";
 
-import { TaskI, MessageI } from '../interfaces';
+import {
+  addTask,
+  getTasks,
+  updateTask,
+  deleteTask,
+} from "../../services/taskServices";
+import { CustomTasksComponent as CustomTasks } from "./CustomTasksComponent";
+import { DynamicTasksComponent as DynamicTasks } from "./DynamicTasksComponent";
 
-import { Modal, Footer } from '../scss';
-import './styles.scss';
+import { TaskI, MessageI } from "../interfaces";
 
-/* Auxils functions here to avoid redeclare them when re-render */
+import { Modal, Footer } from "../scss";
+import "./styles.scss";
+
+/* Utils functions here to avoid redeclare them when re-render */
 const createMessage = (
   setState: Dispatch<SetStateAction<MessageI>>,
   text: string,
   visible: boolean,
-  status: string,
+  status: string
 ) => {
   setState({
     text,
@@ -27,20 +39,38 @@ const createMessage = (
 const resetContentModal = (setState: Dispatch<SetStateAction<TaskI>>) => {
   setState({
     number: undefined,
-    _id: '',
-    task: '',
+    _id: "",
+    task: "",
     completed: false,
   });
 };
 
-const checkParamAndSetState = async (params: { param?: string }, setState: Dispatch<SetStateAction<TaskI[]>>) => {
-  if (params.param === 'custom') {
-    const { data } = await getTasks('custom');
+const checkParamAndSetState = async (
+  params: { param?: string },
+  setState: Dispatch<SetStateAction<TaskI[]>>,
+  quantity: string,
+  setMessage: Dispatch<SetStateAction<MessageI>>,
+  handleMessage: (text: string, status: string) => void,
+  firstRender: boolean
+) => {
+  if (params.param === "custom") {
+    const { data } = await getTasks(params.param, firstRender);
+    console.log("data", data);
     setState(data);
+    createMessage(setMessage, "", false, "");
   } else {
-    const quantity = params.param ? params.param : '3';
-    const { data } = await getTasks(quantity);
-    setState(data);
+    const data = await getTasks(quantity, firstRender);
+    console.log("DATADATA", data);
+    if (data.status === 201 && data.data) {
+      console.log(data.data.message);
+      setState(data.data.tasks);
+      data.data.message
+        ? handleMessage(data.data.message, "error")
+        : createMessage(setMessage, "", false, "");
+    } else if (data.status === 200) {
+      setState(data.data);
+      createMessage(setMessage, "", false, "");
+    }
   }
 };
 
@@ -49,13 +79,21 @@ const getData = async (
   params: { param?: string | undefined },
   setTasks: Dispatch<SetStateAction<TaskI[]>>,
   handleMessage: (text: string, status: string) => void,
+  quantity: string,
+  firstRender: boolean
 ) => {
   try {
-    createMessage(setMessage, 'Loading tasks...', true, 'info');
-    checkParamAndSetState(params, setTasks);
-    createMessage(setMessage, '', false, '');
+    createMessage(setMessage, "Loading tasks...", true, "info");
+    checkParamAndSetState(
+      params,
+      setTasks,
+      quantity,
+      setMessage,
+      handleMessage,
+      firstRender
+    );
   } catch (error) {
-    handleMessage('Failed to get tasks. Try again', 'error');
+    handleMessage("Failed to get tasks. Try again", "error");
     console.error(error);
   }
 };
@@ -64,34 +102,31 @@ const getData = async (
 export const Tasks = () => {
   const [tasks, setTasks] = useState<TaskI[]>([]);
   const [message, setMessage] = useState<MessageI>({
-    text: '',
+    text: "",
     visible: false,
-    status: '',
+    status: "",
   });
-  const [currentTask, setCurrentTask] = useState('');
+  const [currentTask, setCurrentTask] = useState("");
   const [contentModal, setContentModal] = useState<TaskI>({
     number: undefined,
-    _id: '',
-    task: '',
+    _id: "",
+    task: "",
     completed: false,
   });
-
+  const [quantity, setQuantity] = useState("3");
   const params = useParams();
 
-  useEffect(() => {
-    getData(setMessage, params, setTasks, handleMessage);
-  }, [params]);
-
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+  /* Start handlers to custom tasks */
+  const handleChangeCustom = (event: ChangeEvent<HTMLInputElement>) => {
     setCurrentTask(event.currentTarget.value);
   };
 
-  const handleSubmit = async (event: ChangeEvent<HTMLFormElement>) => {
+  const handleSubmitCustom = async (event: ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
       const { data } = await addTask({ task: currentTask });
       if (data.status === 400) {
-        handleMessage(data.message, 'error');
+        handleMessage(data.message, "error");
       } else {
         // Add the new tasks to the exising ones, or put ir alone
         let newTasks = [];
@@ -101,14 +136,28 @@ export const Tasks = () => {
           newTasks = [data];
         }
         setTasks(newTasks);
-        handleMessage('Task created!', 'success');
+        handleMessage("Task created!", "success");
       }
     } catch (error) {
       console.error(error);
-      handleMessage('Task not created, try again.', 'error');
+      handleMessage("Task not created, try again.", "error");
     }
   };
+  /* End handlers to custom tasks */
 
+  /* Start handlers to dynamic tasks */
+  const handleChangeDynamic = (event: ChangeEvent<HTMLInputElement>) => {
+    setQuantity(event.currentTarget.value);
+  };
+
+  const handleSubmitDynamic = (event: ChangeEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    getData(setMessage, params, setTasks, handleMessage, quantity, false);
+    setQuantity("");
+  };
+  /* End handlers to custom tasks */
+
+  /* Start handlers to Tasks modal  */
   const handleUpdate = async (currentTask: string) => {
     const newTasks = [...tasks];
     try {
@@ -118,12 +167,13 @@ export const Tasks = () => {
       await updateTask(currentTask, {
         completed: newTasks[index].completed,
       });
+      console.log("Task successfully updated");
       setTasks(newTasks);
       resetContentModal(setContentModal);
     } catch (error) {
       setTasks(tasks);
       console.error(error);
-      handleMessage('Task not updated, try again.', 'error');
+      handleMessage("Task not updated, try again.", "error");
     }
   };
 
@@ -134,33 +184,47 @@ export const Tasks = () => {
       setTasks(data);
     } catch (error) {
       console.error(error);
-      handleMessage('Task not deleted, try again.', 'error');
+      handleMessage("Task not deleted, try again.", "error");
     }
   };
+  /* End handlers to Tasks modal */
 
   const handleMessage = (text: string, status: string) => {
-    setCurrentTask('');
+    setCurrentTask("");
     createMessage(setMessage, text, true, status);
     setTimeout(() => {
-      createMessage(setMessage, '', false, '');
+      createMessage(setMessage, "", false, "");
     }, 2000);
   };
 
-  console.log('render task container');
+  useEffect(() => {
+    getData(setMessage, params, setTasks, handleMessage, quantity, true);
+    setQuantity("");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  console.log("render task container");
   return (
     <div className="container">
-      {params.param === 'custom' ? (
+      {params.param === "custom" ? (
         <CustomTasks
-          handleSubmit={handleSubmit}
+          handleSubmit={handleSubmitCustom}
           currentTask={currentTask}
-          handleChange={handleChange}
+          handleChange={handleChangeCustom}
           message={message}
           tasks={tasks}
           tooltipText={!!message.text}
           setContentModal={setContentModal}
         />
       ) : (
-        <DynamicTasks tasks={tasks} setContentModal={setContentModal} />
+        <DynamicTasks
+          tasks={tasks}
+          setContentModal={setContentModal}
+          handleChange={handleChangeDynamic}
+          message={message}
+          handleSubmit={handleSubmitDynamic}
+          quantity={quantity}
+        />
       )}
 
       {contentModal?._id && (
@@ -169,17 +233,16 @@ export const Tasks = () => {
           onClose={() =>
             setContentModal({
               number: undefined,
-              _id: '',
-              task: '',
+              _id: "",
+              task: "",
               completed: false,
             })
           }
           handleUpdate={handleUpdate}
           handleDelete={handleDelete}
-          param={params.param || ''}
         />
       )}
-      <Footer path={params?.param === 'custom' ? 'custom' : '/'} />
+      <Footer path={params?.param === "custom" ? "custom" : "/"} />
     </div>
   );
 };
